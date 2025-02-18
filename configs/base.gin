@@ -1,0 +1,36 @@
+from __gin__ import dynamic_registration
+
+import unet
+import model
+import loaders
+
+
+# Dataset 
+loaders.get_dataloaders:
+    img_size = 128
+
+
+# UNET 
+unet.UNET2D: 
+    in_size = 3
+    channels = [64, 128, 256, 256, 256]
+    ratios = [2,2,2,2,1]
+    kernel_size = 3
+    time_channels = 64
+
+
+# TRAINER
+model.RectifiedFlow:
+    net = @unet.UNET2D()
+
+model.Base.train:
+    iterations = 1000000
+    grad_norm=10
+    display_step=500
+    save_step =5000
+
+model.Base.log_samples:
+    nb_steps = [1, 5, 10, 40]
+    n_images = 8    
+
+
